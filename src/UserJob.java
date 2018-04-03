@@ -1,15 +1,22 @@
+/*
+ * Noah Peneycad
+ * CISC324 Lab #6
+ * April 3, 2018
+ * UserJob.java: Creates a UserJob that is either CPU or IO bound. Each UserJob performs 10 iterations
+ * of using the CPU and the disk drive.
+ */
+
 public class UserJob extends Thread {
 
-    private String name;
-    private int bound;
-    private int CPUtime;
-    private int track;
-    private DiskDrive diskDrive;
-    private cpuMonitor cpu;
-    private final int DISK_TRACKS = 1024;
+    private String name; // UserJob number
+    private int bound; // 0 = CPU bound, 1 = IO bound
+    private int CPUtime; // amount of time using the CPU
+    private DiskDrive diskDrive; // instance of the disk drive
+    private CPUmonitor cpu; // instance of the CPU monitor containing N CPUs
+    private final int DISK_TRACKS = 1024; // the disk drive has 1024 tracks
 
     // Constructor
-    public UserJob(String job_name, int job_bound, DiskDrive drive, cpuMonitor cpuOne) {
+    public UserJob(String job_name, int job_bound, DiskDrive drive, CPUmonitor cpuOne) {
         name = "UserJob " + job_name;
         bound = job_bound;
         diskDrive = drive;
@@ -18,9 +25,12 @@ public class UserJob extends Thread {
 
     public void run() {
         System.out.println(name + " is starting");
-        for (int i = 0; i < 5; i++) {
-
-            track = 1 + (int)(Math.random() * ((DISK_TRACKS - 1) + 1));
+        // perform 10 iterations per UserJob
+        for (int i = 0; i < 10; i++) {
+            // gets the last used CPU from CPUmonitor
+            int lastUsedCPU = cpu.getLastUsedCPU();
+            // choose a random track on the disk
+            int track = 1 + (int)(Math.random() * ((DISK_TRACKS - 1) + 1));
 
             // CPU Bound
             if (bound == 0) {
@@ -33,18 +43,17 @@ public class UserJob extends Thread {
                 CPUtime = 1 + (int) (Math.random() * ((200 - 1) + 1));
             }
 
-            cpu.startCPUuse();
-            System.out.println(name + " starting to use a CPU on a burst of " + CPUtime + "ms");
+            // start using the CPU
+            cpu.startCPUuse(name, CPUtime);
             try {
-                Thread.sleep((int)(CPUtime * Math.random() + 1));
+                Thread.sleep(CPUtime); // simulate time using the CPU
             }
             catch (Exception e) {}
-            System.out.println(name + " is finished using the CPU");
-            cpu.endCPUuse();
 
             System.out.println(name + " requesting to read disk track " + track);
             diskDrive.useTheDisk(track);
             System.out.println(name + " finished reading disk track " + track);
+            cpu.endCPUuse(name, lastUsedCPU);
         }
     }
 }
