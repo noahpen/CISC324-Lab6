@@ -6,12 +6,13 @@ public class MainMethod {
 
         UserJob[] userJobs = new UserJob[10];
         DiskDrive diskDrive = new DiskDrive();
+        cpuMonitor cpu = new cpuMonitor();
         int jobBound; // 0 is CPU, 1 is IO
 
         // CPU bound user jobs
         for (int i = 1; i <= 5; i++) {
             jobBound = (int)(Math.random() * ((1) + 1));
-            userJobs[i] = new UserJob(Integer.toString(i), jobBound, diskDrive);
+            userJobs[i] = new UserJob(Integer.toString(i), jobBound, diskDrive, cpu);
             userJobs[i].start();
         }
 

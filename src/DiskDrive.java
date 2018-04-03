@@ -1,16 +1,15 @@
+// Disk Drive Monitor
+
 public class DiskDrive {
 
     private int diskReadHead;
     private int accessTime;
-    private diskDriveMonitor drive;
 
     public DiskDrive() {
         diskReadHead = 0;
-        drive = new diskDriveMonitor();
     }
 
-    public void useTheDisk(int track) {
-        drive.startRead();
+    public synchronized void useTheDisk(int track) {
         if (track > diskReadHead)
             accessTime = 1 + (track - diskReadHead);
         else if (track < diskReadHead)
@@ -23,7 +22,6 @@ public class DiskDrive {
         }
         catch (Exception e) {}
         diskReadHead = track;
-        drive.endRead();
     }
 
 }
