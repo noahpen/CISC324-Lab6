@@ -34,7 +34,7 @@ public class UserJob extends Thread {
             }
 
             cpu.startCPUuse();
-            System.out.println(name + " starting CPU burst of " + CPUtime + "ms");
+            System.out.println(name + " starting to use a CPU on a burst of " + CPUtime + "ms");
             try {
                 Thread.sleep((int)(CPUtime * Math.random() + 1));
             }
